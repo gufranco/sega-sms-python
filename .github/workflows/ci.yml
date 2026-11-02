@@ -1,0 +1,75 @@
+---
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: gate
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Format, lint, types, YAML, shell scripts and every test under coverage
+        run: scripts/run make gate
+
+      - name: Lint the workflows
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7
+
+  replay:
+    name: replay
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Replay the corpus
+        run: scripts/run python -m conformance.corpus
+
+      - name: The machine must beat its throughput floor
+        run: scripts/run python -m conformance.speed
+
+      - name: Every module ships in the wheel and no test does
+        run: scripts/run make package
+
+      - name: Run every test cartridge present, exit 2 meaning none is
+        run: |
+          status=0
+          scripts/run python -m conformance.testroms || status="$?"
+          if [ "${status}" -eq 2 ]; then
+            notice="No test cartridge is present on a hosted runner,"
+            notice="${notice} so this run was skipped rather than passed."
+            notice="${notice} The recorded verdicts are still held by conformance/testroms.test.py."
+            notice="${notice} Run it locally, or point TEST_CARTRIDGES at a folder or zip you own."
+            echo "::notice title=Test cartridges::${notice}"
+            exit 0
+          fi
+          exit "${status}"
+        shell: bash
+
+      - name: Every quote against the manual, where it is present
+        run: scripts/run python -m conformance.quotes

@@ -1,0 +1,13 @@
+---
+blank_issues_enabled: false
+contact_links:
+  - name: Where the TI manual is silent or contradicts itself
+    url: https://github.com/gufranco/sega-sms-python/blob/main/conformance/divergences.json
+    about: >-
+      Each disagreement is listed there with which way this package went and
+      what would settle it.
+  - name: What this package took from openMSX and MAME
+    url: https://github.com/gufranco/sega-sms-python/blob/main/conformance/hardware.json
+    about: >-
+      Every value the manual does not print sits under notStated, with its
+      source and the measurement that would replace it.

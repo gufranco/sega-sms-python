@@ -1,0 +1,6 @@
+*
+!pyproject.toml
+!uv.lock
+!package.json
+!pnpm-lock.yaml
+!compare/frontend.c

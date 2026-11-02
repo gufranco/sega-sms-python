@@ -1,0 +1,12 @@
+---
+extends: default
+ignore: |
+  external/
+  pnpm-lock.yaml
+  node_modules/
+  zilog-z80-python/
+rules:
+  truthy:
+    check-keys: false
+  line-length:
+    max: 100

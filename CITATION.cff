@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+title: sega-sms-python
+message: >-
+  If you use this work, or the facts it was settled against, please cite it.
+type: software
+authors:
+  - given-names: Gustavo
+    family-names: Franco
+    alias: gufranco
+repository-code: https://github.com/gufranco/sega-sms-python
+url: https://github.com/gufranco/sega-sms-python
+abstract: >-
+  A model of the Sega Mark III, both Master Systems and the Game Gear as one machine: the Z80, the VDP package with its sound generator and the board on one clock, booting the original BIOS and a real cartridge, and giving the frame the VDP drew, dot by dot. Every fact about the joining names the page of Sega's Mark III reference manual it was read from, and every value the manual does not print names where it came from and the measurement that would settle it.
+keywords:
+  - sega
+  - master-system
+  - game-gear
+  - mark-iii
+  - emulator
+  - cycle-accurate
+  - hardware-model
+  - conformance
+license: MIT
+version: 0.0.0

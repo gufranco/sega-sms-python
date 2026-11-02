@@ -1,0 +1,15 @@
+#!/bin/sh
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+image="sega-sms-python-tools"
+
+docker build --quiet --tag "${image}" "${root}" >/dev/null
+
+if [ -t 0 ] && [ -t 1 ]; then
+  exec docker run --rm --interactive --tty --user "$(id -u):$(id -g)" \
+    --volume "${root}:/sega-sms-python" --workdir /sega-sms-python "${image}" "$@"
+fi
+
+exec docker run --rm --interactive --user "$(id -u):$(id -g)" \
+  --volume "${root}:/sega-sms-python" --workdir /sega-sms-python "${image}" "$@"

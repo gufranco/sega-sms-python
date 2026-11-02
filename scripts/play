@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+root=$(CDPATH='' cd -- "$(dirname -- "$0")/.." && pwd)
+
+PYTHONPATH="${root}:${root}/zilog-z80-python:${root}/sega-vdp-python:${root}/sega-vdp-python/ti-tms9918-python:${root}/sega-vdp-python/ti-sn76489-python:${root}/sms-mapper-python"
+PYGAME_HIDE_SUPPORT_PROMPT=1
+UV_PROJECT_ENVIRONMENT="${XDG_CACHE_HOME:-${HOME}/.cache}/sega-sms-python/play"
+export PYTHONPATH PYGAME_HIDE_SUPPORT_PROMPT UV_PROJECT_ENVIRONMENT
+
+exec uv run --project "${root}" --locked --only-group play --python 3.12.14 \
+  python -m window.play "$@"

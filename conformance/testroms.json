@@ -1,0 +1,130 @@
+{
+  "note": "Every test cartridge that exercises this machine, by SHA-256, as FAMILY.md's fifth requirement asks, and what each one reported when run on it.",
+  "cartridges": [
+    {
+      "id": "test-suite-0-32",
+      "title": "Test Suite 0.32, by sverx",
+      "sha256": "18c08b24df7339efe8339cd16a9a1bd863cfeac393cc9dde988b8dd35d395a41",
+      "source": "external/Master EverDrive/5 Tools & Service Test Carts.zip",
+      "exercises": "the SEGA Master System TestSuite's System Info page, which tells the regions apart by what port 3F's outputs read back and tests whether port 3E switches the cartridge out",
+      "outcome": "run",
+      "judgement": "verdict: the JPN? and Region lines are the board's answer to port 3F, the MediaEnable? line its answer to port 3E, and the Model and VDP? lines this machine's VDP answering, which on the board's census harness were a stand-in",
+      "runs": [
+        {
+          "model": "sms",
+          "region": "usa",
+          "script": [
+            [120, 255],
+            [6, 253],
+            [10, 255],
+            [6, 253],
+            [10, 255],
+            [6, 253],
+            [10, 255],
+            [6, 239],
+            [120, 255]
+          ],
+          "offset": -32,
+          "verdict": [
+            "ver 0.32",
+            "Video Tests",
+            "Audio Tests",
+            "Pad Tests",
+            "System Info",
+            "Model:Master System",
+            "Region:USA/BRA TV:60Hz (NTSC)",
+            "Hardware tests",
+            "JPN?:No",
+            "VDP?:315-5124",
+            "TV? :60Hz (NTSC)",
+            "MediaEnable?:Yes",
+            "Z80 type?:NMOS",
+            "BIOS sum: 0xE000",
+            "** unidentified BIOS found! **"
+          ],
+          "frame": "81ced16986ebe7f7aa422a065aa758f73d9c373865d95bbd760ddfd358dddba3"
+        },
+        {
+          "model": "sms",
+          "region": "japan",
+          "script": [
+            [120, 255],
+            [6, 253],
+            [10, 255],
+            [6, 253],
+            [10, 255],
+            [6, 253],
+            [10, 255],
+            [6, 239],
+            [120, 255]
+          ],
+          "offset": -32,
+          "verdict": [
+            "ver 0.32",
+            "Video Tests",
+            "Audio Tests",
+            "Pad Tests",
+            "System Info",
+            "Model:Master System",
+            "Region:JPN/KOR TV:60Hz (NTSC)",
+            "Hardware tests",
+            "JPN?:Yes",
+            "VDP?:315-5124",
+            "TV? :60Hz (NTSC)",
+            "MediaEnable?:Yes",
+            "Z80 type?:NMOS",
+            "BIOS sum: 0xE000",
+            "** unidentified BIOS found! **"
+          ],
+          "frame": "583750e33813516e152d3e99d94e863f06cb15d2581871cd1a8cd0da442595a3"
+        }
+      ],
+      "heldBy": [
+        "conformance/testroms.test.py::RecordedVerdictTest.test_the_test_suite_tells_a_japanese_console_from_an_export_one",
+        "conformance/testroms.test.py::RecordedVerdictTest.test_and_finds_the_media_enable_port_on_both",
+        "conformance/testroms.test.py::RecordedVerdictTest.test_and_names_this_machine_s_console_vdp_and_processor"
+      ]
+    },
+    {
+      "id": "paging-pfr-detect-2",
+      "title": "SMS Paging PFR Detect 2.00, by Eric R. Quinn",
+      "sha256": "7c56d5d84c5f701711f2254458b3ce36be7e00aa1438d46d040f21a24b595515",
+      "source": "external/Master EverDrive/5 Tools & Service Test Carts.zip",
+      "exercises": "Sega's paging: which of the four regions of 0000h to BFFFh the frame registers move, and whether the cartridge RAM's two backup pages exist",
+      "outcome": "run",
+      "judgement": "verdict: the first 1K fixed, the rest of all three frames pageable, both backup pages present, and the test complete, which is what the manual prints for Sega's paging with 32K of cartridge RAM",
+      "runs": [
+        {
+          "model": "sms",
+          "region": "usa",
+          "script": [[300, 255]],
+          "offset": 0,
+          "verdict": [
+            "THIS TEST DETERMINES THE",
+            "SYSTEM'S CURRENTLY AVAILABLE",
+            "PAGING CAPABILITIES, (ASSUMING",
+            "THE STANDARD SEGA-STYLE SMS/GG",
+            "PAGING SCHEME).",
+            "IF 'TEST COMPLETE' IS NOT",
+            "DISPLAYED AT THE BOTTOM OF THE",
+            "SCREEN THEN A FATAL TEST ERROR",
+            "HAS OCCURED.",
+            "PAGING REGION:",
+            "0X0000-0X03FF:          FIXED",
+            "0X0400-0X3FFF:       PAGEABLE",
+            "0X4000-0X7FFF:       PAGEABLE",
+            "0X8000-0XBFFF:       PAGEABLE",
+            "BACKUP PAGE 0:         EXISTS",
+            "PAGE 1:         EXISTS",
+            "VER. 2.00        TEST COMPLETE"
+          ],
+          "frame": "297be0c412fa42c69a30745975babdec0174610dff53cd710ce370cadbdc2062"
+        }
+      ],
+      "heldBy": [
+        "conformance/testroms.test.py::RecordedVerdictTest.test_the_paging_detector_finds_the_first_1k_fixed_and_the_rest_pageable",
+        "conformance/testroms.test.py::RecordedVerdictTest.test_and_finds_both_pages_of_cartridge_ram_and_completes"
+      ]
+    }
+  ]
+}

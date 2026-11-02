@@ -1,0 +1,29 @@
+{
+  "note": "Every place two sources about this machine part, what each says, which one this package follows and why, and what would close it.",
+  "authority": "The rungs are the ones hardware.json names, in its order.",
+  "readOn": "2026-10-29",
+  "divergences": [
+    {
+      "id": "bios-hand-over-c000",
+      "severity": "low",
+      "status": "open",
+      "topic": "What RAM C000h holds when the export BIOS starts a cartridge.",
+      "referenceSays": {
+        "rung": 3,
+        "claim": "C000h holds A8h, and the census boards of sms-mapper-python and sega-vdp-python start every Master System run from it.",
+        "source": "sms-mapper-python conformance/harness.py and sega-vdp-python's census board, at v1.0.0 and v1.0.1"
+      },
+      "recordingSays": {
+        "rung": 2,
+        "claim": "C000h holds ABh, the port 3E value the BIOS has just written to turn the cartridge on.",
+        "source": "BIOS 1.3 and BIOS 2.0 run on this package with Sonic The Hedgehog, read at the instruction at 0000h"
+      },
+      "thisPackageDid": {
+        "claim": "Starts every Master System census run with SP DFF0h and C000h ABh.",
+        "why": "Both original BIOS images leave ABh there, and A8h is a value no BIOS was seen to write. Bits 0 and 1 of port 3E select nothing, so a cartridge that masks them reads the two alike."
+      },
+      "packageFollows": "recording",
+      "wouldCloseIt": "On a Master System with each BIOS, start a cartridge that shows the byte at C000h on screen."
+    }
+  ]
+}

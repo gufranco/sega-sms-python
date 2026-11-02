@@ -1,0 +1,9 @@
+[submodule "sega-vdp-python"]
+	path = sega-vdp-python
+	url = https://github.com/gufranco/sega-vdp-python.git
+[submodule "sms-mapper-python"]
+	path = sms-mapper-python
+	url = https://github.com/gufranco/sms-mapper-python.git
+[submodule "zilog-z80-python"]
+	path = zilog-z80-python
+	url = https://github.com/gufranco/zilog-z80-python.git

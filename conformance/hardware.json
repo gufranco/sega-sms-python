@@ -1,0 +1,111 @@
+{
+  "note": "What Sega printed about how the Mark III's processor, its VDP and its board are joined, fact by fact, with the sentence each was read from. Everything about a part on its own lives in that part's member. Values no document prints sit under notStated, each marked unverified with its source and the measurement that would settle it.",
+  "authority": {
+    "order": [
+      "hardware.json facts, for anything Sega printed in its Mark III reference manual",
+      "the original BIOS images run on this package, for the state a console is in when the BIOS starts a cartridge",
+      "the Master System and Game Gear cartridge libraries, for whether every retail cartridge boots and draws, counted by conformance/census.py",
+      "nothing else"
+    ],
+    "why": "The Mark III manual is the only Sega document that says which pin the pause button drives, which events raise the maskable interrupt and what the reset button is wired to. Each part is held to its own member, so this record holds only the wiring between them and the boot path.",
+    "comparedAgainst": {
+      "runner": "conformance/census.py",
+      "what": "Every Master System and Game Gear image in a real library, booted on this machine from its cartridge, with the first frame it draws and a digest of every frame recorded."
+    }
+  },
+  "part": "The Mark III, Master System and Game Gear as one machine: the processor, the VDP package and the board on one clock",
+  "verified": true,
+  "documents": {
+    "markIIIManual": {
+      "publisher": "Sega, by its own page footer",
+      "title": "Software Reference Manual for the SEGA Mark III Console",
+      "file": "manufacturer/SoftwareReferenceManualForSegaMarkIIIEU.pdf",
+      "sha256": "166f09331ba9df055f7a352f10c6a7843911470bc72d9347eda4a0de86e8cfce",
+      "readOn": "2026-10-29",
+      "howRead": "Pages 3 and 4 of the printed numbering, the processor section, from the text layer. The manual's page header numbers its pages."
+    }
+  },
+  "facts": {
+    "processorClock": {
+      "value": { "processor": "Z80A", "megahertz": 3.58 },
+      "quote": "The Mk3 uses a Z80A microprocessor, clocked at 3.58 MHz.",
+      "page": "3",
+      "document": "markIIIManual",
+      "governs": ["mark-iii", "sms", "sms2", "gg"],
+      "heldBy": [
+        "conformance/hardware.test.py::ClockTest.test_a_second_of_sound_is_the_printed_clock_in_t_states"
+      ]
+    },
+    "resetButtonIsAnInput": {
+      "value": { "port": "DD", "bit": 4 },
+      "quote": "The momentary RESET button on the console does not control Z80A reset; it is attached to an input port for software polling.",
+      "page": "3",
+      "document": "markIIIManual",
+      "governs": ["sms"],
+      "heldBy": [
+        "conformance/hardware.test.py::ResetButtonTest.test_the_reset_button_is_read_on_a_port_and_resets_nothing"
+      ]
+    },
+    "pauseIsNmi": {
+      "value": { "button": "pause", "restart": "0066" },
+      "quote": "The NMI pin is connected to the console \"PAUSE\" button.",
+      "page": "3",
+      "document": "markIIIManual",
+      "governs": ["mark-iii", "sms", "sms2"],
+      "heldBy": [
+        "conformance/hardware.test.py::NonMaskableTest.test_pause_drives_the_non_maskable_interrupt_to_its_restart"
+      ]
+    },
+    "nmiEdgeTriggered": {
+      "value": { "interruptsWhileHeld": 1 },
+      "quote": "This interrupt is \"edge-triggered\", which means that if the PAUSE button is held down, you will get a single interrupt only.",
+      "page": "3",
+      "document": "markIIIManual",
+      "governs": ["mark-iii", "sms", "sms2"],
+      "heldBy": [
+        "conformance/hardware.test.py::NonMaskableTest.test_holding_pause_gives_one_interrupt_only"
+      ]
+    },
+    "intFromVdp": {
+      "value": {
+        "restart": "0038",
+        "events": ["vertical blanking interval", "horizontal line counter"]
+      },
+      "quote": "This interrupt can be activated by two events in the VDP chip:",
+      "alsoSays": "In mode 1, activating the Z80A INT pin causes a Restart instruction to be executed at location $38 if interrupts are enabled.",
+      "page": "4",
+      "document": "markIIIManual",
+      "governs": ["mark-iii", "sms", "sms2", "gg"],
+      "heldBy": [
+        "conformance/hardware.test.py::MaskableTest.test_the_frame_interrupt_restarts_the_processor_at_0038",
+        "conformance/hardware.test.py::MaskableTest.test_the_line_counter_restarts_the_processor_at_0038_as_well"
+      ]
+    }
+  },
+  "notStated": {
+    "biosHandOver": {
+      "value": { "stack": "DFF0", "c000": "AB" },
+      "verified": false,
+      "why": "No Sega document prints the state the BIOS leaves when it starts a cartridge. The value is the original BIOS 1.3 and 2.0 run on this package with Sonic The Hedgehog, read at the instruction at 0000h, so it is only as right as this package; the census starts every Master System run from it.",
+      "source": "BIOS 1.3 and BIOS 2.0 run on this package, 2026-10-29: SP DFF0h and RAM C000h ABh at frames 621 and 349.",
+      "howToSettleIt": "On a Master System with each BIOS, start a cartridge whose first instructions write SP and the byte at C000h to the screen, and read them.",
+      "governs": ["sms", "sms2"]
+    },
+    "processorPart": {
+      "value": "z80",
+      "verified": false,
+      "why": "The manual names the Z80A for the Mark III only. Which Z80 the Master System II's board and the Game Gear's custom chip carry is not printed, and the NMOS and CMOS parts differ in what OUT (C),0 sends and in the flags after SCF and CCF. This package uses the NMOS part on every console.",
+      "source": "The manual's processor section, read for the Mark III and assumed for the rest.",
+      "howToSettleIt": "On each console run OUT (C),0 to a port whose written value can be read back, and SCF after an instruction that leaves the undocumented flag bits known, and compare with zilog-z80-python's z80 and z84c00 models.",
+      "governs": ["sms2", "gg"]
+    },
+    "portStrobe": {
+      "value": { "ticksIntoTheIoCycle": 10 },
+      "verified": false,
+      "why": "Zilog's manual puts IORQ with RD or WR from the rising edge of T2 to the falling edge of T3, and samples read data at that falling edge; the TMS9918A data manual latches written data at the rising edge of CSW. So a port access lands at the falling edge of T3, three T states and part of a fourth into the I/O cycle. No document prints where that edge falls among the three master ticks of the fourth T state, which depends on the duty cycle of the processor clock the VDP divides out, or how much of the VDP's access time comes before it. This package lands it after the first.",
+      "source": "Zilog Z80 CPU User Manual UM0080, input or output cycles; TMS9918A/TMS9928A/TMS9929A Video Display Processors Data Manual, November 1982, CPU-VDP interface timing, data setup and hold times about CSW high.",
+      "howToSettleIt": "Software moves an access only by whole T states, three master ticks, so no sweep steps one tick. On a console that latches the H counter when TH changes, toggle TH through port 3Fh from instruction starts one T state apart across at least four starts, and read each latched value. Run the same cartridge here with the access at each of the three ticks of T3; the tick whose readings match the console's is the one.",
+      "governs": ["mark-iii", "sms", "sms2", "gg"]
+    }
+  }
+}

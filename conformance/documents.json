@@ -1,0 +1,31 @@
+{
+  "note": "Every document this package is held to, by identity rather than by name. conformance/documents.py brings each one down again and refuses anything whose digest does not match.",
+  "authority": {
+    "1": "A manufacturer document. What the maker of the hardware printed about it.",
+    "2": "A recording taken off real hardware. Nothing here occupies that rung yet.",
+    "3": "Independent research, for what no manufacturer printed."
+  },
+  "whyNotCarriedHere": "None of these is this project's document, and this repository is public. What is carried is the identity, which is what makes a copy checkable.",
+  "readOn": "2026-10-29",
+  "partsWithNoDocument": {
+    "sms": "No Sega document describes how the first Master System joins its parts apart from what it shares with the Mark III. The state its BIOS leaves is measured by running the BIOS on this package, recorded under notStated.",
+    "sms2": "No Sega document describes the Master System II. Which Z80 it carries is recorded under notStated.",
+    "gg": "No Sega document describes the Game Gear. Which Z80 its custom chip carries is recorded under notStated."
+  },
+  "documents": [
+    {
+      "file": "manufacturer/SoftwareReferenceManualForSegaMarkIIIEU.pdf",
+      "rung": 1,
+      "publisher": "Sega, by its own page footer, Sega Mk3 Hardware Reference Manual (Rev1)",
+      "title": "Software Reference Manual for the SEGA Mark III Console",
+      "date": "undated",
+      "retrievedFrom": "https://segaretro.org/images/d/d6/SoftwareReferenceManualForSegaMarkIIIEU.pdf",
+      "covers": ["mark-iii"],
+      "settles": "The processor and its clock, the reset button wired to an input port, the pause button on the non-maskable line and its edge, and the two VDP events that raise the maskable interrupt, on pages 3 and 4.",
+      "sha256": "166f09331ba9df055f7a352f10c6a7843911470bc72d9347eda4a0de86e8cfce",
+      "bytes": 184840,
+      "pages": 45,
+      "provenance": "A retyped text, not a scan: the PDF was produced by Ghostscript and carries typing errors. Its footer names Sega, and nobody records who retyped it or from which printing. Every quote in hardware.json matches its text layer once both are flattened to letters and digits."
+    }
+  ]
+}

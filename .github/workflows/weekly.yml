@@ -1,0 +1,94 @@
+---
+name: Weekly
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ahead:
+    name: The newest tools, in the image
+    runs-on: ubuntu-26.04
+    timeout-minutes: 30
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Formatting, as the newest formatter sees it
+        run: scripts/run uvx ruff@latest format --check .
+
+      - name: Lint, with whatever rules were added since
+        run: scripts/run uvx ruff@latest check --output-format=github .
+
+      - name: Types, as the newest checker sees them
+        run: scripts/run uvx --with types-setuptools mypy@latest
+
+  quotes:
+    name: Every quote against the manual it names
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Bring the manual down and refuse any other file
+        run: scripts/run python -m conformance.documents
+
+      - name: Every quote against the manual it names
+        run: scripts/run python -m conformance.quotes
+
+  pins:
+    name: How far behind the submodules are
+    runs-on: ubuntu-26.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Compare every pin against its upstream head
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          owner="${GITHUB_REPOSITORY%%/*}"
+          advice="Bump it, run the suite, and read what changed"
+          advice="${advice} before recording any new output."
+          git submodule status | while read -r sha path _rest; do
+            sha="${sha#[-+]}"
+            name="${path##*/}"
+            head=$(gh api "repos/${owner}/${name}/commits?per_page=1" \
+              --jq '.[0].sha')
+            if [ "${sha}" = "${head}" ]; then
+              echo "${name}: at head"
+              continue
+            fi
+            count=$(gh api "repos/${owner}/${name}/compare/${sha}...${head}" \
+              --jq '.ahead_by')
+            title="${name} is behind"
+            echo "::warning title=${title}::${count} behind ${head}. ${advice}"
+          done
+        shell: bash

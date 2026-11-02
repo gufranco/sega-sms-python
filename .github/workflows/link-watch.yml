@@ -1,0 +1,71 @@
+---
+name: Link watch
+
+on:
+  schedule:
+    - cron: "41 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: link-watch
+  cancel-in-progress: false
+
+jobs:
+  ask:
+    name: Ask every address whether it still answers
+    runs-on: ubuntu-26.04
+    timeout-minutes: 15
+    steps:
+      - uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Ask
+        id: ask
+        run: |
+          set +e
+          scripts/run python -m conformance.links | tee "${RUNNER_TEMP}/links.json"
+          echo "broken=${PIPESTATUS[0]}" >> "${GITHUB_OUTPUT}"
+        shell: bash
+
+      - name: Say what went quiet without raising it
+        run: |
+          quiet=$(scripts/run python -c \
+            'import json, sys; print("\n".join(json.load(sys.stdin)["unreachable"]))' \
+            < "${RUNNER_TEMP}/links.json")
+          if [ -n "${quiet}" ]; then
+            echo "These did not answer, which is not the same as being gone:"
+            echo "${quiet}"
+          else
+            echo "every address answered"
+          fi
+        shell: bash
+
+      - name: Report the addresses that have gone
+        if: steps.ask.outputs.broken != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          title="A cited link no longer resolves"
+          open=$(gh issue list --search "${title} in:title" \
+            --state open --json number --jq '.[].number')
+          if [ -n "${open}" ]; then
+            echo "already reported"
+            exit 0
+          fi
+          {
+            cat .github/link-gone.md
+            printf '\n```json\n'
+            cat "${RUNNER_TEMP}/links.json"
+            printf '```\n'
+          } > "${RUNNER_TEMP}/issue.md"
+          gh issue create --title "${title}" --body-file "${RUNNER_TEMP}/issue.md"
+        shell: bash

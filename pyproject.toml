@@ -1,0 +1,129 @@
+[build-system]
+requires = ["setuptools>=84.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "segasms"
+description = "The Sega Mark III, Master System and Game Gear in Python: the Z80, the VDP package with its sound generator and the board on one clock, booting the original BIOS and a real cartridge, and the frame the VDP drew."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.12"
+dynamic = ["version"]
+keywords = [
+  "sega",
+  "master-system",
+  "game-gear",
+  "mark-iii",
+  "mapper",
+  "bank-switching",
+  "retrocomputing",
+  "hardware-model",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: System :: Emulators",
+  "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/gufranco/sega-sms-python"
+Source = "https://github.com/gufranco/sega-sms-python"
+Issues = "https://github.com/gufranco/sega-sms-python/issues"
+
+[project.scripts]
+segasms-doctor = "segasms.doctor:main"
+
+[dependency-groups]
+dev = [
+  "coverage==7.6.10",
+  "mypy==1.14.1",
+  "ruff==0.16.3",
+  "setuptools==84.0.0",
+  "types-setuptools==84.0.0.20260812",
+  "yamllint==1.38.0",
+]
+play = ["pygame-ce==2.5.8"]
+
+[tool.uv]
+package = false
+
+[tool.setuptools]
+packages = ["segasms"]
+
+[tool.setuptools.dynamic]
+version = { attr = "segasms.version.VERSION" }
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = ["zilog-z80-python", "sega-vdp-python", "sms-mapper-python", "external"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF", "PL", "BLE", "C4", "N", "A", "T20", "PTH"]
+ignore = [
+  "PLR0913",
+  "PLR2004",
+  "PLR0912",
+  "PLR0915",
+  "PLR0911",
+  "PLC0415",
+  "PLR0917",
+  "E501",
+  "N818",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"segasms/environment.py" = ["BLE001", "T201"]
+"*.test.py" = ["PLR2004", "N999"]
+"conformance/*.py" = ["T201"]
+"conformance/census.py" = ["BLE001", "T201"]
+"segasms/doctor.py" = ["BLE001", "T201"]
+
+[tool.mypy]
+strict = true
+python_version = "3.12"
+warn_unreachable = true
+warn_no_return = true
+strict_equality = true
+extra_checks = true
+enable_error_code = [
+  "explicit-override",
+  "ignore-without-code",
+  "possibly-undefined",
+  "redundant-expr",
+  "truthy-bool",
+  "truthy-iterable",
+  "unused-awaitable",
+]
+files = ["segasms", "conformance", "window"]
+mypy_path = [
+  "sega-vdp-python",
+  "sega-vdp-python/ti-tms9918-python",
+  "sega-vdp-python/ti-sn76489-python",
+  "sms-mapper-python",
+]
+
+[[tool.mypy.overrides]]
+module = ["z80.*"]
+follow_imports = "skip"
+ignore_missing_imports = true
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+  "zilog-z80-python/*",
+  "sega-vdp-python/*",
+  "sms-mapper-python/*",
+  "external/*",
+  "node_modules/*",
+]
+branch = true
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true

@@ -1,0 +1,112 @@
+---
+name: Something is wrong
+description: >-
+  A dot shows the wrong colour, a flag rises at the wrong time, an access
+  lands in the wrong place, or nothing works at all
+labels: ["bug"]
+body:
+  - type: textarea
+    id: doctor
+    attributes:
+      label: What the doctor says
+      description: |
+        Run this from the repository and paste every line, including the ones
+        that did not pass. Those are the ones worth reading, so do not trim it.
+
+        macOS and Linux:
+
+            python3 segasms/doctor.py
+
+        Windows, whichever of these resolves:
+
+            python segasms/doctor.py
+            py -3 segasms/doctor.py
+
+        It reports the machine as well as the package, so most answers are in
+        there already. If it will not run at all, say so here and paste whatever
+        it printed instead.
+      render: text
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Almost every report here is settled by a few numbers: which part, the
+        eight register values, and the line and dot where it went wrong. The
+        fields below ask for them so nobody has to guess.
+
+        If a cartridge is involved, never attach it and never link to one. Its
+        SHA-256 identifies it exactly, and that is all anybody needs.
+
+  - type: textarea
+    id: state
+    attributes:
+      label: Where the part was
+      description: |
+        Run this at the moment it goes wrong and paste all of it.
+      render: text
+      placeholder: |
+        print(part.model, [hex(one) for one in part.registers])
+        print("line", part.line, "dot", part.dot, "status", hex(part.status))
+        print("region", part.region, "colour", part.colour)
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected, and where that comes from
+      description: |
+        A page of the TI manual, a capture from hardware, or another
+        implementation. Say which, because they do not carry the same weight.
+      placeholder: |
+        colour 15 at line 0 dot 0, per Section 2.4.1 on page 2-17
+    validations:
+      required: true
+
+  - type: textarea
+    id: happened
+    attributes:
+      label: What happened instead
+      description: |
+        The exact output or the whole traceback. Paste it rather than describing
+        it: a summary of an error loses the part that identifies it.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: The shortest thing that shows it
+      description: Python we can run as it stands, with no editing.
+      render: python
+      placeholder: |
+        import segasms
+
+        cartridge = segasms.Cartridge(open("game.sms", "rb").read())
+        console = segasms.Console("sms", cartridge=cartridge)
+        console.write(0xFFFF, 5)
+        print(hex(console.read(0x8000)))
+    validations:
+      required: true
+
+  - type: input
+    id: cartridge
+    attributes:
+      label: The cartridge, if one is involved
+      description: |
+        Its name, its region, and its SHA-256. Never attach the file itself, and
+        never link to somewhere it can be downloaded.
+      placeholder: "Girl's Garden (Japan), sha256 ..."
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Before submitting
+      options:
+        - label: The output above is complete rather than trimmed
+          required: true
+        - label: I own anything I am naming, and I have attached none of it
+          required: true
