@@ -8,7 +8,7 @@ English | [日本語](README.ja.md) | [简体中文](README.zh-Hans.md) | [繁�
 [![Release](https://img.shields.io/github/v/release/gufranco/sega-sms-python)](https://github.com/gufranco/sega-sms-python/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**2,608** distinct Master System and Game Gear images booted for **300** frames each, **0** property failures over the **813** retail ones, **5** quotes located in the manual, **695** tests, **100%** statement and branch coverage with nothing excluded, no dependencies beyond the standard library and three members of this family
+**2,608** distinct Master System and Game Gear images booted for **300** frames each, **0** property failures over the **813** retail ones, **5** quotes located in the manual, **696** tests, **100%** statement and branch coverage with nothing excluded, no dependencies beyond the standard library and three members of this family
 
 ```python
 import smsmapper
