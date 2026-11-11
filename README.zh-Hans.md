@@ -8,7 +8,7 @@
 [![Release](https://img.shields.io/github/v/release/gufranco/sega-sms-python)](https://github.com/gufranco/sega-sms-python/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-**2,608** 个不同的 Master System 和 Game Gear 映像各启动 **300** 帧，**813** 个零售映像中属性失败为 **0**，在手册中定位到 **5** 处引文，**695** 个测试，不排除任何内容的 **100%** 语句和分支覆盖率，除标准库和本家族的三个成员外无依赖
+**2,608** 个不同的 Master System 和 Game Gear 映像各启动 **300** 帧，**813** 个零售映像中属性失败为 **0**，在手册中定位到 **5** 处引文，**696** 个测试，不排除任何内容的 **100%** 语句和分支覆盖率，除标准库和本家族的三个成员外无依赖
 
 ```python
 import smsmapper
